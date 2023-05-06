@@ -2,10 +2,18 @@
 from flask import Flask, render_template, request, session, redirect, url_for, flash
 import sqlite3
 import functools
+from flask_bootstrap import Bootstrap
+from datetime import datetime
+from flask_moment import Moment
+
 
 # 创建 Flask 应用
 app = Flask(__name__)
 app.secret_key = "my_secret_key"
+
+bootstrap = Bootstrap(app)
+moment = Moment(app)
+
 
 # 连接数据库
 conn = sqlite3.connect('admin.db')
@@ -67,7 +75,7 @@ def index():
     # if 'admin' in session:
     #     return "Welcome, %s!" % session['admin']
     # else:
-    return render_template('index.html')
+    return render_template('index.html', current_time=datetime.utcnow())
 
 # 定义关于页面函数
 @app.route('/about')
@@ -75,6 +83,15 @@ def index():
 def about():
     return "This is a simple Flask website."
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
 # 运行应用
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
