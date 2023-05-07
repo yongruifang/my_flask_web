@@ -9,7 +9,9 @@ class Admin(UserMixin, db.Model):
     name = db.Column(db.String(64))
     password = db.Column(db.String(64),unique=False)
     password_hash = db.Column(db.String(128))
+    email = db.Column(db.String(64),unique=True,index=True)
 
+    # 修改password属性为只写，不可读，并添加一个新的方法set_password来设置password_hash属性。这样就可以避免在数据库中保存明文密码了。
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')

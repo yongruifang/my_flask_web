@@ -1,0 +1,35 @@
+其实不必要删除，在models.py，我通过修改password属性为只写，不可读，
+并添加一个新的方法set_password来设置password_hash属性。
+这样就可以避免在数据库中保存明文密码了。
+当时注释掉password，其实admin还是存在这个属性的，并没有消失
+所以在执行flask db migrate 时会提示模型没有变化。
+
+为了验证，我就加了一个无关紧要的属性 email
+这一次，执行flask db migrate的时候就有反应了
+(flask-env) D:\Projects\vscode_project\flask-env\gpt-helpme>set FLASK_APP=flasky
+
+(flask-env) D:\Projects\vscode_project\flask-env\gpt-helpme>flask db migrate -m '增加邮箱信息'
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.autogenerate.compare] Detected added column 'admin.email'
+INFO  [alembic.autogenerate.compare] Detected added index 'ix_admin_email' on '['email']'
+Generating D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\versions\d0441b9a1fee_增加邮箱信息.py ...  done
+
+(flask-env) D:\Projects\vscode_project\flask-env\gpt-helpme>flask db upgrade
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> d0441b9a1fee, '增加邮箱信息'
+
+(flask-env) D:\Projects\vscode_project\flask-env\gpt-helpme>sqlite3 data-pro.sqlite
+SQLite version 3.41.2 2023-03-22 11:56:21
+Enter ".help" for usage hints.
+sqlite> .tables
+admin            alembic_version
+sqlite> select * from admin;
+1|admin|pbkdf2:sha256:600000$aQdw80qy6qSsB6ti$d7665e32b7a6bd1d5e33f820cebbd695988ddc491e22bceb5d208ce4e46e9a70|
+sqlite> update admin set email='aa1336039@163.com' where id=1;
+sqlite> select * from admin;
+1|admin|pbkdf2:sha256:600000$aQdw80qy6qSsB6ti$d7665e32b7a6bd1d5e33f820cebbd695988ddc491e22bceb5d208ce4e46e9a70|aa1336039@163.com
+sqlite> .quit
+
+(flask-env) D:\Projects\vscode_project\flask-env\gpt-helpme>
