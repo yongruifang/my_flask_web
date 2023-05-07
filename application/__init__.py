@@ -5,6 +5,7 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 import os
+from flask_login import LoginManager 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -13,14 +14,15 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+
 def create_app(config_name='production'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
-    # app.secret_key = "my_secret_key"
-    # app.config['SQLALCHEMY_DATABASE_URI'] = \
-    # 'sqlite:///' + os.path.join(basedir,'data.sqlite')
-    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False   
+
+    login_manager.init_app(app)   
 
     bootstrap.init_app(app)
     mail.init_app(app)
@@ -29,5 +31,8 @@ def create_app(config_name='production'):
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     return app
