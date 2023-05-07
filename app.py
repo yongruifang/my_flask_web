@@ -109,6 +109,12 @@ def index():
 def about():
     return "This is a simple Flask website."
 
+# 装饰器函数，用于在启动交互式shell时，自动加载应用程序中的对象
+# 返回的字典中的每个键都是在shell中可用的名称，值是要注册的对象
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db,Admin=Admin)
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
