@@ -5,6 +5,9 @@ import functools
 from flask_bootstrap import Bootstrap
 from datetime import datetime
 from flask_moment import Moment
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, PasswordField
+from wtforms.validators import DataRequired
 
 
 # 创建 Flask 应用
@@ -14,6 +17,11 @@ app.secret_key = "my_secret_key"
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
+class NameForm(FlaskForm):
+    # StringField和SubmitField是Flask-WTF中的类，用于生成HTML表单元素
+    name = StringField('What is your name?', validators=[DataRequired()])
+    password = PasswordField('What is your Password', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 # 连接数据库
 conn = sqlite3.connect('admin.db')
@@ -54,12 +62,16 @@ def login():
         conn.close()
         if admin:
             session['admin'] = admin[0]
-            # flash('Welcome, {}!'.format(username), 'success')
-            return redirect(url_for('index'))
+            # return redirect(url_for('index'))
+            form = NameForm()
+            # 回调函数，name字段会在用户填写完表单并点击提交按钮后被赋值
+            if form.validate_on_submit():
+                name = form.name.data
+                form.name.data=''
+            return render_template('index.html', name=username,current_time=datetime.utcnow(),form=form)
         else:
             flash('Invalid username or password', 'danger')
             return render_template('login.html')
-            # return "Invalid username or password"
     else:
         return render_template('login.html')
 
@@ -72,10 +84,11 @@ def logout():
 # 定义主页函数
 @app.route('/')
 def index():
-    # if 'admin' in session:
-    #     return "Welcome, %s!" % session['admin']
-    # else:
-    return render_template('index.html', current_time=datetime.utcnow())
+    form = NameForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data=''
+    return render_template('index.html', current_time=datetime.utcnow(),form=form)
 
 # 定义关于页面函数
 @app.route('/about')
