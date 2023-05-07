@@ -1,0 +1,16 @@
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> conda env config vars set MAIL_PASSWORD=PJHVPBKFSRVDBTMD
+To make your changes take effect please reactivate your environment
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> conda env config vars set MAIL_USERNAME=admin # 保密
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> conda deactivate
+(base) PS D:\Projects\vscode_project\flask-env\gpt-helpme> conda activate flask-env
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> conda env config vars list
+MAIL_USERNAME = admin
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> python 
+Python 3.8.16 (default, Mar  2 2023, 03:18:16) [MSC v.1916 64 bit (AMD64)] :: Anaconda, Inc. on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import os
+>>> value = os.environ.get('MAIL_USERNAME')
+>>> print(value)
+admin
+>>> exit()
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> 

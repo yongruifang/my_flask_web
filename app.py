@@ -11,6 +11,7 @@ from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_migrate import Migrate
+from flask_mail import Mail,Message
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,12 +22,21 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(basedir,'data.sqlite')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAIL_SERVER'] = 'smtp.163.com'
+app.config['MAIL_PORT'] = 465 #25 
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+# app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
+# app.config['FLASKY_MAIL_SENDER'] = 'Flasky Admin <flasky@example.com>'
+# app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
 # 使用 db 和 app 初始化Migrate
 migrate = Migrate(app,db)
+mail = Mail(app)
 # 创建迁移脚本的步骤
 #   在新项目中使用flask db init, 添加数据库迁移支持
 #   在命令行使用 flask db migrate 创建，升级数据库
