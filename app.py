@@ -1,6 +1,5 @@
 # 导入 Flask 模块和其他所需的模块
-from flask import Flask, render_template, request, session, redirect, url_for, flash
-import sqlite3
+from flask import Flask, render_template, request, session, redirect, url_for
 import functools
 from flask_bootstrap import Bootstrap
 from datetime import datetime
@@ -11,7 +10,7 @@ from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_migrate import Migrate
-from flask_mail import Mail,Message
+from flask_mail import Mail
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,9 +26,6 @@ app.config['MAIL_PORT'] = 465 #25
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-# app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
-# app.config['FLASKY_MAIL_SENDER'] = 'Flasky Admin <flasky@example.com>'
-# app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
@@ -37,11 +33,6 @@ db = SQLAlchemy(app)
 # 使用 db 和 app 初始化Migrate
 migrate = Migrate(app,db)
 mail = Mail(app)
-# 创建迁移脚本的步骤
-#   在新项目中使用flask db init, 添加数据库迁移支持
-#   在命令行使用 flask db migrate 创建，升级数据库
-# 更新数据库
-#   在命令行使用 flask db upgrade 应用新的迁移脚本，将更改应用于数据库。
 
 class Admin(db.Model):
     __tablename__ = 'admin'
@@ -60,23 +51,6 @@ class NameForm(FlaskForm):
     password = PasswordField('What is your Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-# # 连接数据库
-# conn = sqlite3.connect('admin.db')
-# c = conn.cursor()
-
-# # 创建管理员表格（如果不存在）
-# c.execute('''CREATE TABLE IF NOT EXISTS admin
-#              (name TEXT PRIMARY KEY, password TEXT)''')
-# conn.commit()
-
-# # 添加一个管理员（如果管理员不存在）
-# c.execute("SELECT * FROM admin WHERE name=?", ("admin",))
-# if not c.fetchone():
-#     c.execute("INSERT INTO admin VALUES (?, ?)", ("admin", "666"))
-#     conn.commit()
-
-# # 关闭数据库连接
-# conn.close()
 
 def login_required(view):
     @functools.wraps(view)

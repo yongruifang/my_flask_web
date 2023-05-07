@@ -36,3 +36,6 @@ sqlite>
 
 
 
+!!!真相大白了，
+原来set FLASK_APP在vscode的终端里面是不能生效的
+我应该要跑到Anaconda的终端里面运行才可以
