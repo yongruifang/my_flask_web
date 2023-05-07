@@ -25,12 +25,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
+# 使用 db 和 app 初始化Migrate
 migrate = Migrate(app,db)
+# 创建迁移脚本的步骤
+#   在新项目中使用flask db init, 添加数据库迁移支持
+#   在命令行使用 flask db migrate 创建，升级数据库
+# 更新数据库
+#   在命令行使用 flask db upgrade 应用新的迁移脚本，将更改应用于数据库。
 
 class Admin(db.Model):
     __tablename__ = 'admin'
     name = db.Column(db.String(64),primary_key = True)
     password = db.Column(db.String(64),unique=False)
+    id = db.Column(db.Integer,unique=True)
 
     def __repr__(self):
         return '<Admin %r>' %self.name

@@ -1,3 +1,4 @@
+#使用flask-SQLAlchemy的方法
 (flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> flask shell
 Python 3.8.16 (default, Mar  2 2023, 03:18:16) [MSC v.1916 64 bit (AMD64)] on win32
 App: app
@@ -16,3 +17,21 @@ john
 >>> db.session.commit()
 >>> exit()
 (flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme>
+
+
+//添加数据库迁移
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> flask db init
+Creating directory D:\Projects\vscode_project\flask-env\gpt-helpme\migrations ...  done
+Creating directory D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\versions ...  done
+Generating D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\alembic.ini ...  done
+Generating D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\env.py ...  done
+Generating D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\README ...  done
+Generating D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\script.py.mako ...  done
+Please edit configuration/connection/logging settings in 'D:\\Projects\\vscode_project\\flask-env\\gpt-helpme\\migrations\\alembic.ini' before proceeding.
+//对Admin模型类去做一定的修改，比如添加一个列, 完成之后再回来输入命令
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> flask db migrate -m "给admin表添加id列"
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.autogenerate.compare] Detected added column 'admin.id'
+INFO  [alembic.autogenerate.compare] Detected added unique constraint 'None' on '['id']'
+Generating D:\Projects\vscode_project\flask-env\gpt-helpme\migrations\versions\e4051f2f5a06_给admin表添加id列.py ...  done
