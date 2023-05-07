@@ -21,9 +21,10 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
-                    {% if 'admin' in session %}
+                    {% if name %}
                     <span class="navbar-text">
-                        Welcome, {{session['admin']}}!
+                        <!-- Welcome, {{session['admin']}}! -->
+                        Welcome, {{name}}!
                     </span>
                         <li class="nav-item">
                             <a class="nav-link" href="/logout">Logout</a>

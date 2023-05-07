@@ -8,14 +8,32 @@ from flask_moment import Moment
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
+import os
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 # 创建 Flask 应用
 app = Flask(__name__)
 app.secret_key = "my_secret_key"
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(basedir,'admin.db')
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
+
+class Admin(db.Model):
+    __tablename__ = 'admin'
+    name = db.Column(db.String(64),primary_key = True)
+    password = db.Column(db.String(64),unique=False)
+
+    def __repr__(self):
+        return '<Admin %r>' %self.name
+
+
 
 class NameForm(FlaskForm):
     # StringField和SubmitField是Flask-WTF中的类，用于生成HTML表单元素
@@ -29,13 +47,13 @@ c = conn.cursor()
 
 # 创建管理员表格（如果不存在）
 c.execute('''CREATE TABLE IF NOT EXISTS admin
-             (username TEXT PRIMARY KEY, password TEXT)''')
+             (name TEXT PRIMARY KEY, password TEXT)''')
 conn.commit()
 
 # 添加一个管理员（如果管理员不存在）
-c.execute("SELECT * FROM admin WHERE username=?", ("admin",))
+c.execute("SELECT * FROM admin WHERE name=?", ("admin",))
 if not c.fetchone():
-    c.execute("INSERT INTO admin VALUES (?, ?)", ("admin", "password"))
+    c.execute("INSERT INTO admin VALUES (?, ?)", ("admin", "666"))
     conn.commit()
 
 # 关闭数据库连接
@@ -52,33 +70,28 @@ def login_required(view):
 # 定义登录函数
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        conn = sqlite3.connect('admin.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM admin WHERE username=? AND password=?", (username, password))
-        admin = c.fetchone()
-        conn.close()
+    form = NameForm()
+    # 回调函数，name字段会在用户填写完表单并点击提交按钮后被赋值
+    if form.validate_on_submit():
+        name = form.name.data
+        # 验证
+        password = form.password.data
+        # conn = sqlite3.connect('admin.db')
+        # c = conn.cursor()
+        # c.execute("SELECT * FROM admin WHERE name=? AND password=?", (name, password))
+        # admin = c.fetchone()
+        # conn.close()
+        admin = Admin.query.filter_by(name=form.name.data,password=form.password.data).first()
         if admin:
-            session['admin'] = admin[0]
-            # return redirect(url_for('index'))
-            form = NameForm()
-            # 回调函数，name字段会在用户填写完表单并点击提交按钮后被赋值
-            if form.validate_on_submit():
-                name = form.name.data
-                form.name.data=''
-            return render_template('index.html', name=username,current_time=datetime.utcnow(),form=form)
-        else:
-            flash('Invalid username or password', 'danger')
-            return render_template('login.html')
-    else:
-        return render_template('login.html')
+            session['name'] = name
+            return redirect(url_for('index'))
+        return render_template('login.html',form=form, name=session.get('name')) 
+    return   render_template('login.html',form=form,name=session.get('name'))
 
 # 定义注销函数
 @app.route('/logout')
 def logout():
-    session.pop('admin', None)
+    session.pop('name', None)
     return redirect(url_for('index'))
 
 # 定义主页函数
@@ -88,7 +101,7 @@ def index():
     if form.validate_on_submit():
         name = form.name.data
         form.name.data=''
-    return render_template('index.html', current_time=datetime.utcnow(),form=form)
+    return render_template('index.html', current_time=datetime.utcnow(),form=form,name=session.get('name'))
 
 # 定义关于页面函数
 @app.route('/about')
