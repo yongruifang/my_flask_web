@@ -1,0 +1,19 @@
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> flask shell
+Python 3.8.16 (default, Mar  2 2023, 03:18:16) [MSC v.1916 64 bit (AMD64)] on win32
+App: app
+Instance: D:\Projects\vscode_project\flask-env\gpt-helpme\instance
+>>> a = Admin()
+>>> a.password = 'cat'
+>>> a.password
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "D:\Projects\vscode_project\flask-env\gpt-helpme\app\models.py", line 12, in password
+    raise AttributeError('password is not a readable attribute')
+AttributeError: password is not a readable attribute
+>>> a.password_hash
+'pbkdf2:sha256:600000$griAUdKtxb8mcE6j$6faf4bd6b2b7e530505188d40752c5a686a000dc3727b2057289395766e0fe2e'
+>>> a.verify_password('cat')
+True
+>>> a.verify_password('dog')
+False
+>>>   

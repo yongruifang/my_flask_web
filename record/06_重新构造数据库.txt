@@ -1,0 +1,38 @@
+flask db init
+Usage: flask [OPTIONS] COMMAND [ARGS]...
+Try 'flask --help' for help.
+Error: No such command 'db'.
+在把密码项改为散列值后，第二次执行flask db 时，竟然提示我没有db选项
+所以删掉data.sqlite, 重新建库
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> flask shell
+Python 3.8.16 (default, Mar  2 2023, 03:18:16) [MSC v.1916 64 bit (AMD64)] on win32
+App: app
+Instance: D:\Projects\vscode_project\flask-env\gpt-helpme\instance
+>>> from app import db
+>>> db.create_all()
+>>> a1=Admin(id=1,name='admin',password='666')
+>>> a1.password
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "D:\Projects\vscode_project\flask-env\gpt-helpme\app\models.py", line 12, in password
+    raise AttributeError('password is not a readable attribute')
+AttributeError: password is not a readable attribute
+>>> a1.password_hash
+'pbkdf2:sha256:600000$9boWX4F1oiHilxEE$bc70003c065ea8ec39571035111105a2c02d92a35bb8c14dfd58bbd09627739f'
+>>> db.session.add(a1)
+>>> db.session.commit()
+>>> Admin.query.all()
+[<Admin 'admin'>]
+
+
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> sqlite3 .\data.sqlite
+SQLite version 3.41.2 2023-03-22 11:56:21
+Enter ".help" for usage hints.
+sqlite> .tables
+admin
+sqlite> select * from admin;
+1|admin|pbkdf2:sha256:600000$9boWX4F1oiHilxEE$bc70003c065ea8ec39571035111105a2c02d92a35bb8c14dfd58bbd09627739f
+sqlite> 
+
+
+
