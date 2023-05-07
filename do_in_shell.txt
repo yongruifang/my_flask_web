@@ -1,0 +1,18 @@
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> flask shell
+Python 3.8.16 (default, Mar  2 2023, 03:18:16) [MSC v.1916 64 bit (AMD64)] on win32
+App: app
+Instance: D:\Projects\vscode_project\flask-env\gpt-helpme\instance
+>>> db.create_all() # 寻找所有db.Model的子类，然后在数据库中创建对应的表
+>>> # 会发现出现了一个data.sqlite的文件
+>>> # 插入一些admin行
+>>> a1=Admin(name='admin',password='666')
+>>> a2=Admin(name='john',password='777')
+>>> print(a1.name)
+admin
+>>> print(a2.name)
+john
+>>> db.session.add(a1)
+>>> db.session.add(a2)
+>>> db.session.commit()
+>>> exit()
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme>

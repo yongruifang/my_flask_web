@@ -10,6 +10,7 @@ from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 import os
+from flask_migrate import Migrate
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -17,13 +18,14 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.secret_key = "my_secret_key"
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'sqlite:///' + os.path.join(basedir,'admin.db')
+    'sqlite:///' + os.path.join(basedir,'data.sqlite')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app,db)
 
 class Admin(db.Model):
     __tablename__ = 'admin'
@@ -41,23 +43,23 @@ class NameForm(FlaskForm):
     password = PasswordField('What is your Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-# 连接数据库
-conn = sqlite3.connect('admin.db')
-c = conn.cursor()
+# # 连接数据库
+# conn = sqlite3.connect('admin.db')
+# c = conn.cursor()
 
-# 创建管理员表格（如果不存在）
-c.execute('''CREATE TABLE IF NOT EXISTS admin
-             (name TEXT PRIMARY KEY, password TEXT)''')
-conn.commit()
+# # 创建管理员表格（如果不存在）
+# c.execute('''CREATE TABLE IF NOT EXISTS admin
+#              (name TEXT PRIMARY KEY, password TEXT)''')
+# conn.commit()
 
-# 添加一个管理员（如果管理员不存在）
-c.execute("SELECT * FROM admin WHERE name=?", ("admin",))
-if not c.fetchone():
-    c.execute("INSERT INTO admin VALUES (?, ?)", ("admin", "666"))
-    conn.commit()
+# # 添加一个管理员（如果管理员不存在）
+# c.execute("SELECT * FROM admin WHERE name=?", ("admin",))
+# if not c.fetchone():
+#     c.execute("INSERT INTO admin VALUES (?, ?)", ("admin", "666"))
+#     conn.commit()
 
-# 关闭数据库连接
-conn.close()
+# # 关闭数据库连接
+# conn.close()
 
 def login_required(view):
     @functools.wraps(view)
