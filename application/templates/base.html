@@ -21,21 +21,6 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
-                    <!-- {% if name %}
-                    <span class="navbar-text">
-                        Welcome, {{name}}!
-                    </span>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/auth/logout">Logout</a>
-                        </li>
-                    {% else %}
-                    <span class="navbar-text">
-                        Hello, Stranger!
-                    </span>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/login">Login</a>
-                            </li>
-                    {% endif %} -->
                     <!-- current_user 由 Flask-Login 定义，在视图函数和模板中自动可用 -->
                     {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
@@ -50,10 +35,11 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav nav-pills nav-stacked">
-                <li><a href="#">简介</a></li>
-                <li><a href="#">今日模型结果</a></li>
-                <li><a href="#">历史持仓记录</a></li>
-                <li><a href="#">累计收益率</a></li>
+                <li><a href="{{ url_for('main.intro') }}">简介</a></li>
+                <li><a href="{{ url_for('main.today_input') }}">今日股票更新</a></li>
+                <li><a href="{{ url_for('main.today_result') }}">今日模型结果</a></li>
+                <li><a href="{{ url_for('main.history') }}">历史持仓记录</a></li>
+                <li><a href="{{ url_for('main.benifit') }}">累计收益率</a></li>
             </ul>
         </div>
         <div class="col-md-10">

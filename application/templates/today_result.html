@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}HFFquant{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    模型评分
+</div>
+
+<h2>Execute</h2>
+<form method="POST" action="{{ url_for('main.today_execute') }}">
+    <input type="submit" value="Execute">
+</form>  
+<h2>Print</h2>
+<form method="POST" action="{{ url_for('main.today_print') }}">
+    <input type="submit" value="Print">
+</form>
+
+{% if value %}
+    {% for item in value %}
+        <p>{{ item }}</p>
+    {% endfor %}
+{% endif %}
+
+
+{% if text %}
+    {% for item in text %}
+       <p>{{ item }}</p> 
+    {% endfor %}
+{% endif %}
+
+
+
+{% endblock %}

@@ -3,6 +3,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    # app.secret_key，它是用于对 session 数据进行加密的密钥。如果没有设置 secret_key，Flask 将无法对 session 数据进行加密，这样会使 session 数据不安全。
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.163.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '465'))
