@@ -3,6 +3,7 @@ from .feature_engine import GetInterceptorFeature_for_buy
 import tensorflow as tf
 from datetime import datetime
 from msedge.selenium_tools import Edge, EdgeOptions
+import math
 # 如果是直接 import datetime ，那么就要用 datetime.datetime.today() 来获取当前时间
 import os
 datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
@@ -22,17 +23,13 @@ def execute(morning_stock,afternoon_stock):
         a=class_GIF.get_feature()
         a = transfer.transform(a)
         a = a.reshape(-1,10,5)
-        # print(code)
-        # print(wr_model.predict(a))
-        result.append(wr_model.predict(a)[0][0])
+        result.append(math.ceil(wr_model.predict(a)[0][0]*100))
     for code in afternoon_stock:
         class_GIF=GetInterceptorFeature_for_buy(code,datetime.today(),10,1,driver)
         a=class_GIF.get_feature()
         a = transfer.transform(a)
         a = a.reshape(-1,10,5)
-        # print(code)
-        # print(wr_model.predict(a))
-        result.append(wr_model.predict(a)[0][0])
+        result.append(math.ceil(wr_model.predict(a)[0][0]*100))
     driver.quit()
     return result
 

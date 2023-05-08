@@ -11,6 +11,7 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    REDIS_URL = 'redis://:password@localhost:6379/0'
 
     @staticmethod
     def init_app(app):

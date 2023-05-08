@@ -1,10 +1,13 @@
 # 导入 Flask 模块和其他所需的模块
-from flask import render_template, session, redirect, url_for
+from flask import render_template, session, redirect, url_for, current_app
+from flask import copy_current_request_context
 from datetime import datetime
 from . import main
 from .forms import PredictForm
 from flask_login import login_required
 from .quant.main.prediction import execute
+from threading import Thread
+
 
 # 定义主页函数
 @main.route('/')
@@ -31,19 +34,29 @@ def today_input():
     else:
         return render_template('today_input.html',predictForm=predictForm)
 
-@main.route('/today_result', methods=['GET', 'POST'])
+@main.route('/today_result')
 @login_required
 def today_result():
     return render_template('today_result.html')
 
+
+def async_execute(app, morning_stock, afternoon_stock):
+    with app.app_context():
+        value = execute(morning_stock=morning_stock, afternoon_stock=afternoon_stock)
+        session['predict_result'] = value
+
 @main.route('/today_execute',methods=['GET','POST'])
+@login_required
 def today_execute():
     morning = session['morning']
     noon = session['noon']
-    value = execute(morning_stock=morning,afternoon_stock=noon)
-    return render_template('today_result.html',value=value)
+    # value = execute(morning_stock=morning, afternoon_stock=noon)
+    thr = Thread(target=async_execute, args=[current_app._get_current_object(),morning,noon]) 
+    thr.start() 
+    return render_template('today_result.html')
 
 @main.route('/today_print',methods=['GET','POST'])
+@login_required
 def today_print():
     text = session['morning'] + session['noon']
     return render_template('today_result.html',text=text)
