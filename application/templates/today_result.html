@@ -17,8 +17,8 @@
     <input type="submit" value="Print">
 </form>
 
-{% if 'predict_result' in session %}
-    {% for item in session['predict_result'] %}
+{% if predict_result %}
+    {% for item in predict_result %}
         <p>{{ item }}</p>
     {% endfor %}
 {% endif %}

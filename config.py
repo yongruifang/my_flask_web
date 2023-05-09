@@ -1,6 +1,9 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-
+from flask_redis import FlaskRedis
+from flask_session import Session
+redis_client = FlaskRedis()
+session_store = Session()
 
 class Config:
     # app.secret_key，它是用于对 session 数据进行加密的密钥。如果没有设置 secret_key，Flask 将无法对 session 数据进行加密，这样会使 session 数据不安全。
@@ -11,8 +14,14 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    REDIS_URL = 'redis://:password@localhost:6379/0'
-
+    # REDIS_URL = 'redis://:password@localhost:6379/0'
+    REDIS_URL = 'redis://localhost:6379/0'
+    JSON_AS_ASCILL = False
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = redis_client
+    SESSION_PERMANENT = True
+    SESSION_USE_SIGNER = True
+    
     @staticmethod
     def init_app(app):
         pass
