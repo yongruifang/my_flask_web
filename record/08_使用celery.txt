@@ -1,0 +1,89 @@
+import time
+from celery import Celery
+
+celery = Celery(
+    'tasks',  # 当前模块名字
+    broker='redis://localhost:6379/0',  # redis消息中间件，用于任务队列
+    backend='redis://localhost:6379/1' # redis消息中间件，用于存储任务结果
+    )
+
+@celery.task() # 用装饰器将普通函数转换为celery任务
+def add(a,b):
+    time.sleep(5)
+    return a+b
+
+if __name__ == "__main__":
+    result = add.delay(2,3)
+    print(result) #  一下子就运行结束并返回任务id
+
+
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> celery -A tasks worker -l info
+ 
+ -------------- celery@DESKTOP-NHD2HJT v5.2.7 (dawn-chorus)
+--- ***** ----- 
+-- ******* ---- Windows-10-10.0.23451-SP0 2023-05-09 14:54:25
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         tasks:0x1bce01fcc70
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     redis://localhost:6379/1
+- *** --- * --- .> concurrency: 16 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** -----
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+
+
+[tasks]
+  . tasks.add
+
+[2023-05-09 14:54:25,354: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2023-05-09 14:54:25,360: INFO/MainProcess] mingle: searching for neighbors
+[2023-05-09 14:54:26,220: INFO/SpawnPoolWorker-1] child process 22096 calling self.run()
+[2023-05-09 14:54:26,232: INFO/SpawnPoolWorker-2] child process 17576 calling self.run()   
+[2023-05-09 14:54:26,241: INFO/SpawnPoolWorker-4] child process 19348 calling self.run()
+[2023-05-09 14:54:26,254: INFO/SpawnPoolWorker-3] child process 11748 calling self.run()
+[2023-05-09 14:54:26,266: INFO/SpawnPoolWorker-6] child process 13604 calling self.run()   
+[2023-05-09 14:54:26,266: INFO/SpawnPoolWorker-5] child process 3768 calling self.run()    
+[2023-05-09 14:54:26,288: INFO/SpawnPoolWorker-8] child process 7424 calling self.run()
+[2023-05-09 14:54:26,293: INFO/SpawnPoolWorker-10] child process 4776 calling self.run()   
+[2023-05-09 14:54:26,312: INFO/SpawnPoolWorker-9] child process 7056 calling self.run()
+[2023-05-09 14:54:26,315: INFO/SpawnPoolWorker-7] child process 22008 calling self.run()
+[2023-05-09 14:54:26,321: INFO/SpawnPoolWorker-11] child process 19664 calling self.run()  
+[2023-05-09 14:54:26,327: INFO/SpawnPoolWorker-14] child process 6284 calling self.run()   
+[2023-05-09 14:54:26,330: INFO/SpawnPoolWorker-13] child process 21420 calling self.run()
+[2023-05-09 14:54:26,332: INFO/SpawnPoolWorker-12] child process 4788 calling self.run()   
+[2023-05-09 14:54:26,337: INFO/SpawnPoolWorker-16] child process 15368 calling self.run()  
+[2023-05-09 14:54:26,348: INFO/SpawnPoolWorker-15] child process 17916 calling self.run()
+[2023-05-09 14:54:26,379: INFO/MainProcess] mingle: all alone
+[2023-05-09 14:54:26,392: INFO/MainProcess] celery@DESKTOP-NHD2HJT ready.
+
+
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> pip install eventlet
+Collecting eventlet
+  Downloading eventlet-0.33.3-py2.py3-none-any.whl (226 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 226.8/226.8 kB 729.2 kB/s eta 0:00:00        
+Requirement already satisfied: greenlet>=0.3 in d:\anaconda\envs\flask-env\lib\site-packages (from eventlet) (2.0.2)
+Requirement already satisfied: dnspython>=1.15.0 in d:\anaconda\envs\flask-env\lib\site-packages (from eventlet) (2.3.0)
+Requirement already satisfied: six>=1.10.0 in d:\anaconda\envs\flask-env\lib\site-packages (from eventlet) (1.16.0)
+Installing collected packages: eventlet
+Successfully installed eventlet-0.33.3
+(flask-env) PS D:\Projects\vscode_project\flask-env\gpt-helpme> celery -A tasks worker -l info -P eventlet
+ 
+ -------------- celery@DESKTOP-NHD2HJT v5.2.7 (dawn-chorus)
+--- ***** -----
+-- ******* ---- Windows-10-10.0.23451-SP0 2023-05-09 14:56:41
+- *** --- * ---
+- ** ---------- [config]
+- ** ---------- .> app:         tasks:0x1c133412910
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     redis://localhost:6379/1
+- *** --- * --- .> concurrency: 16 (eventlet)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** -----
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+
+
+[tasks]
+  . tasks.add

@@ -1,11 +1,13 @@
+import requests
+import json
 import pandas as pd
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
-import jqdatasdk as jq
+# import jqdatasdk as jq
 import re
 from bs4 import BeautifulSoup
-jq.auth('13192921466','A123456a')
+# jq.auth('13192921466','A123456a')
 import os
 datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
 
@@ -16,16 +18,25 @@ class GetInterceptorFeature:
         self.end_day = end_day
         self.max_window = max_window
         self.afternoon = afternoon
-        data = jq.get_bars(jq.normalize_code(self.code),count = self.max_window+1,\
-            unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
+        # df = jq.get_bars(jq.normalize_code(self.code),count = self.max_window+1,\
+        #     unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
+        send_json = {
+            'code' : code,
+            'count' : self.max_window,
+            'end_day' : self.end_day.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        headers = {'Content-Type': 'application/json'}  
+        response = requests.post('http://localhost:8888/acquire_data', headers=headers, data=json.dumps(send_json))
+        receive_json = response.json()['data']
+        df = pd.read_json(receive_json)
+        self.data=df
+        self.date = df.date.values
+        self.close = df.close.values
+        self.volume = df.volume.values
+        self.open = df.open.values
+        self.low = df.low.values
+        self.high = df.high.values
         self.result = result
-        self.data=data
-        self.date = data.date.values
-        self.close = data.close.values
-        self.volume = data.volume.values
-        self.open = data.open.values
-        self.low = data.low.values
-        self.high = data.high.values
     def get_feature(self):
         '''R1是日收益率  zf是振幅   R2是收盘价/开盘价-1  deltaV是量的变化'''
         # 通过计算'close'的后一天/前一天-1得到日收益率
@@ -91,15 +102,26 @@ class GetInterceptorFeature_for_buy:
         self.end_day = end_day
         self.max_window = max_window
         self.afternoon = afternoon
-        data = jq.get_bars(jq.normalize_code(self.code),count = self.max_window,\
-            unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
-        self.data=data
-        self.date = data.date.values
-        self.close = data.close.values
-        self.volume = data.volume.values
-        self.open = data.open.values
-        self.low = data.low.values
-        self.high = data.high.values
+        # df = jq.get_bars(jq.normalize_code(self.code),count = self.max_window,\
+        #     unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
+        # print(df)
+        send_json = {
+            'code' : code,
+            'count' : self.max_window,
+            'end_day' : self.end_day.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        headers = {'Content-Type': 'application/json'}  
+        response = requests.post('http://localhost:8888/acquire_data', headers=headers, data=json.dumps(send_json))
+        receive_json = response.json()['data']
+        df = pd.read_json(receive_json)
+        # print(df)
+        self.data=df
+        self.date = df.date.values
+        self.close = df.close.values
+        self.volume = df.volume.values
+        self.open = df.open.values
+        self.low = df.low.values
+        self.high = df.high.values
         self.driver = driver
     def get_feature(self):
         '''R1是日收益率  zf是振幅   R2是收盘价/开盘价-1  deltaV是量的变化'''
