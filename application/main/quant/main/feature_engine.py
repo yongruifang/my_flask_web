@@ -4,10 +4,9 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
-# import jqdatasdk as jq
+import jqdatasdk as jq
 import re
 from bs4 import BeautifulSoup
-# jq.auth('13192921466','A123456a')
 import os
 datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
 
@@ -18,17 +17,18 @@ class GetInterceptorFeature:
         self.end_day = end_day
         self.max_window = max_window
         self.afternoon = afternoon
-        # df = jq.get_bars(jq.normalize_code(self.code),count = self.max_window+1,\
-        #     unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
-        send_json = {
-            'code' : code,
-            'count' : self.max_window,
-            'end_day' : self.end_day.strftime('%Y-%m-%d %H:%M:%S')
-        }
-        headers = {'Content-Type': 'application/json'}  
-        response = requests.post('http://localhost:8888/acquire_data', headers=headers, data=json.dumps(send_json))
-        receive_json = response.json()['data']
-        df = pd.read_json(receive_json)
+        jq.auth('13192921466','A123456a')
+        df = jq.get_bars(jq.normalize_code(self.code),count = self.max_window+1,\
+            unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
+        # send_json = {
+        #     'code' : code,
+        #     'count' : self.max_window,
+        #     'end_day' : self.end_day.strftime('%Y-%m-%d %H:%M:%S')
+        # }
+        # headers = {'Content-Type': 'application/json'}  
+        # response = requests.post('http://localhost:8888/acquire_data', headers=headers, data=json.dumps(send_json))
+        # receive_json = response.json()['data']
+        # df = pd.read_json(receive_json)
         self.data=df
         self.date = df.date.values
         self.close = df.close.values
@@ -102,18 +102,19 @@ class GetInterceptorFeature_for_buy:
         self.end_day = end_day
         self.max_window = max_window
         self.afternoon = afternoon
-        # df = jq.get_bars(jq.normalize_code(self.code),count = self.max_window,\
-        #     unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
+        jq.auth('13192921466','A123456a')
+        df = jq.get_bars(jq.normalize_code(self.code),count = self.max_window,\
+            unit='1d',fields=['date', 'open', 'close', 'high', 'low', 'volume'],include_now=True,end_dt=self.end_day)
         # print(df)
-        send_json = {
-            'code' : code,
-            'count' : self.max_window,
-            'end_day' : self.end_day.strftime('%Y-%m-%d %H:%M:%S')
-        }
-        headers = {'Content-Type': 'application/json'}  
-        response = requests.post('http://localhost:8888/acquire_data', headers=headers, data=json.dumps(send_json))
-        receive_json = response.json()['data']
-        df = pd.read_json(receive_json)
+        # send_json = {
+        #     'code' : code,
+        #     'count' : self.max_window,
+        #     'end_day' : self.end_day.strftime('%Y-%m-%d %H:%M:%S')
+        # }
+        # headers = {'Content-Type': 'application/json'}  
+        # response = requests.post('http://localhost:8888/acquire_data', headers=headers, data=json.dumps(send_json))
+        # receive_json = response.json()['data']
+        # df = pd.read_json(receive_json)
         # print(df)
         self.data=df
         self.date = df.date.values
