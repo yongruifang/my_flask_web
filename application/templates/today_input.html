@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}HFFquant{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    今日股票输入
+</div>
+
+{{ wtf.quick_form(predictForm) }}
+
+{% endblock %}

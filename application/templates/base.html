@@ -1,0 +1,58 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}HFFquant{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='stock.png') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='stock.png') }}" type="image/x-icon">
+{% endblock %}
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">HFFquant</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                    <!-- current_user 由 Flask-Login 定义，在视图函数和模板中自动可用 -->
+                    {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                    {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li><a href="{{ url_for('main.intro') }}">简介</a></li>
+                {% if current_user.name == 'admin' %}
+                    <li><a href="{{ url_for('main.today_input') }}">今日股票更新</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('main.today_result') }}">今日模型结果</a></li>
+                <li><a href="{{ url_for('main.history') }}">历史持仓记录</a></li>
+                <li><a href="{{ url_for('main.benifit') }}">累计收益率</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block page_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}

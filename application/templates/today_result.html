@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+{% endblock %}
+
+{% block title %}HFFquant{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    模型评分
+</div>
+
+{% if current_user.name == 'admin' %}
+    <h2>Execute</h2>
+    <form method="POST" action="{{ url_for('main.today_execute') }}">
+        <input type="submit" value="Execute">
+    </form>  
+    <h2>Print</h2>
+    <form method="POST" action="{{ url_for('main.today_print') }}">
+        <input type="submit" value="Print">
+    </form>
+{% endif %}
+
+<!-- 下一步，转换为表格的形式 -->
+{% if predict_result %}
+    <!-- {% for item in text %}
+       <p>{{ item }}</p> 
+    {% endfor %}
+    {% for item in predict_result %}
+        <p>{{ item }}</p>
+    {% endfor %} -->
+    <table class="table table-striped">
+        <tr>
+          <td class="text-center">股票名称</td>
+          {% for item in name %}
+            <td class="text-center">{{ item }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td class="text-center">股票代码</td>
+          {% for item in code %}
+            <td class="text-center">{{ item }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td class="text-center">模型评分</td>
+          {% for item in predict_result %}
+            <td class="text-center">{{ item }}</td>
+          {% endfor %}
+        </tr>
+      </table>
+{% endif %}
+
+{% if text %}
+    {% for item in text %}
+       <p>{{ item }}</p> 
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
