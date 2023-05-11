@@ -36,7 +36,9 @@
         <div class="col-md-2">
             <ul class="nav nav-pills nav-stacked">
                 <li><a href="{{ url_for('main.intro') }}">简介</a></li>
-                <li><a href="{{ url_for('main.today_input') }}">今日股票更新</a></li>
+                {% if current_user.name == 'admin' %}
+                    <li><a href="{{ url_for('main.today_input') }}">今日股票更新</a></li>
+                {% endif %}
                 <li><a href="{{ url_for('main.today_result') }}">今日模型结果</a></li>
                 <li><a href="{{ url_for('main.history') }}">历史持仓记录</a></li>
                 <li><a href="{{ url_for('main.benifit') }}">累计收益率</a></li>

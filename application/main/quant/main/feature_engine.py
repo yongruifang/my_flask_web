@@ -80,6 +80,7 @@ def get_today_data(code,driver):
     html = driver.page_source
     # 解析HTML代码
     soup = BeautifulSoup(html, 'html.parser')
+    stock_name = soup.title.text.split(' ')[0]
     target_list = soup.find('div', {'class': 'sider_brief'}).find_all('td')
     close = target_list[0].text
     high = target_list[8].text
@@ -92,7 +93,7 @@ def get_today_data(code,driver):
         data[i] = float(re.findall(pattern,data[i])[0])
         if i == 4:
             data[i] = data[i]*1000000
-    return data 
+    return data,stock_name 
 
 class GetInterceptorFeature_for_buy:
     driver = None
@@ -126,7 +127,7 @@ class GetInterceptorFeature_for_buy:
         self.driver = driver
     def get_feature(self):
         '''R1是日收益率  zf是振幅   R2是收盘价/开盘价-1  deltaV是量的变化'''
-        today_data =  get_today_data(self.code,self.driver)
+        today_data,stock_name =  get_today_data(self.code,self.driver)
         self.close = np.append(self.close,today_data[0])
         self.high = np.append(self.high,today_data[1])
         self.low = np.append(self.low,today_data[2])
@@ -139,7 +140,7 @@ class GetInterceptorFeature_for_buy:
         deltaV = self.volume[1:]/self.volume[:-1]-1
         df = pd.DataFrame({'R1':R1,'振幅':zf,'R2':R2,'deltaV':deltaV})
         df['afternoon'] = self.afternoon
-        return df
+        return df,stock_name
 
 if __name__ == '__main__':
     execute()

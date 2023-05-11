@@ -32,6 +32,18 @@ def today_input():
         # 保存到会话中
         session['morning'] = morning
         session['noon'] = noon
+        # 应该是保存到数据库中
+        code_list = morning + noon
+        json_string = json.dumps(code_list)
+        redis_client.set('code_list',json_string)
+        code_list = morning
+        json_string = json.dumps(code_list)
+        redis_client.set('morning_code_list',json_string)
+        code_list = noon
+        json_string = json.dumps(code_list)
+        redis_client.set('noon_code_list',json_string)
+        # 同时我要清空value_list
+        redis_client.delete('value_list')
         return redirect(url_for('main.today_result'))
     else:
         return render_template('today_input.html',predictForm=predictForm)
@@ -40,10 +52,13 @@ def today_input():
 @login_required
 def today_result():
     json_string = redis_client.get('value_list')
-    print(json_string)
+    json_name_string = redis_client.get('stock_names')
+    json_code_string = redis_client.get('code_list')
     if json_string != None:
+        name_list = json.loads(json_name_string.decode())
         value_list = json.loads(json_string.decode())
-        return render_template('today_result.html',predict_result=value_list)
+        code_list = json.loads(json_code_string.decode())
+        return render_template('today_result.html',predict_result=value_list,code=code_list,name=name_list)
     return render_template('today_result.html')
 
 
