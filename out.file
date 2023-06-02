@@ -1,0 +1,20 @@
+[uWSGI] getting INI configuration from uwsgi_conf.ini
+*** Starting uWSGI 2.0.20 (64bit) on [Fri May 12 21:49:28 2023] ***
+compiled with version: 9.4.0 on 12 May 2023 05:16:46
+os: Linux-5.4.0-144-generic #161-Ubuntu SMP Fri Feb 3 14:49:04 UTC 2023
+nodename: iZ7xvgorg5dxzlo2y0on22Z
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 1
+current working directory: /home/my_flask_web
+detected binary path: /usr/local/bin/uwsgi
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+your processes number limit is 7368
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+probably another instance of uWSGI is running on the same address (0.0.0.0:80).
+bind(): Address already in use [core/socket.c line 769]

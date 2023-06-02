@@ -8,6 +8,7 @@ import jqdatasdk as jq
 import re
 from bs4 import BeautifulSoup
 import os
+import requests
 datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class GetInterceptorFeature:
@@ -75,12 +76,21 @@ def execute():
 def get_today_data(code,driver):
     # driver.quit()
     # 打开目标网页
-    url = r'http://quote.eastmoney.com/{}.html'.format(code)
+    url = r'http://quote.eastmoney.com/sz{}.html'.format(code)
+    response = requests.get(url,timeout=5)
+    if(response.status_code!=200):
+        url = r'http://quote.eastmoney.com/sh{}.html'.format(code)
+    print(url)
     driver.get(url)
     html = driver.page_source
     # 解析HTML代码
     soup = BeautifulSoup(html, 'html.parser')
-    stock_name = soup.title.text.split(' ')[0]
+    title = soup.title.text.split(' ')[0]
+    if len(title)>8:
+        title =soup.title.text.split('(')[0]
+    stock_name = title
+    #print(stock_name)
+    #print(soup)
     target_list = soup.find('div', {'class': 'sider_brief'}).find_all('td')
     close = target_list[0].text
     high = target_list[8].text

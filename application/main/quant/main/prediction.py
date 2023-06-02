@@ -2,33 +2,50 @@ import joblib
 from .feature_engine import GetInterceptorFeature_for_buy
 import tensorflow as tf
 from datetime import datetime
-from msedge.selenium_tools import Edge, EdgeOptions
+# from msedge.selenium_tools import Edge, EdgeOptions
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import math
 # 如果是直接 import datetime ，那么就要用 datetime.datetime.today() 来获取当前时间
 import os
 import json
 from .... import redis_client
+
 datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
 modeldir = os.path.join(os.path.dirname(__file__), '..', 'model')
 
 def execute(morning_stock,afternoon_stock):
     result = []
     # 创建webDriver对象
-    options = EdgeOptions()
-    options.use_chromium = True
-    options.add_argument('--headless')  # 隐藏浏览器窗口
-    driver = Edge(executable_path="msedgedriver.exe", options=options)
+    # options = EdgeOptions()
+    # options.use_chromium = True
+    # options.add_argument('--headless')  # 隐藏浏览器窗口
+    # driver = Edge(executable_path="msedgedriver.exe", options=options)
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    driver = webdriver.Chrome(options=options, executable_path='/usr/local/bin/chromedriver')
     transfer = joblib.load(os.path.join(datadir, '标准化器.pkl'))
     wr_model = tf.keras.models.load_model(os.path.join(modeldir, 'model.h5'))
     stock_names = []
+    
     for code in morning_stock:
+        if code=='':
+            print('空串')
+            continue
         class_GIF=GetInterceptorFeature_for_buy(code,datetime.today(),10,0,driver)
         a,stock_name=class_GIF.get_feature()
         stock_names.append(stock_name)
         a = transfer.transform(a)
         a = a.reshape(-1,10,5)
+        print('开始预测')
         result.append(math.ceil(wr_model.predict(a)[0][0]*100))
     for code in afternoon_stock:
+        if code=='':
+            print('空串')
+            continue
         class_GIF=GetInterceptorFeature_for_buy(code,datetime.today(),10,1,driver)
         a,stock_name=class_GIF.get_feature()
         stock_names.append(stock_name)
